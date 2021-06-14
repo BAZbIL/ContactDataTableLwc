@@ -1,0 +1,62 @@
+<!--
+ - Created by Admin on 10.04.2021.
+ -->
+
+<!-- Modal Add Contact -->
+<template>
+
+    <lightning-button label="NEW" variant="brand" onclick={modalAddContactShow}></lightning-button>
+
+    <template if:true={modalAddContact}>
+        <lightning-record-edit-form object-api-name="Contact">
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+                     aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+
+                    <header class="slds-modal__header">
+                        <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                                title="Close" onclick={modalAddContactHide}>
+                            <lightning-icon icon-name="utility:close"
+                                            alternative-text="close"
+                                            variant="inverse"
+                                            size="small"></lightning-icon>
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                        <h2 class="slds-text-heading_medium slds-hyphenate">Add Contact in Data Table</h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium">
+
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-size_6-of-12 slds-p-horizontal--medium slds-m-bottom_medium">
+                                <lightning-input label="First Name" type="text" value={FirstName}
+                                                 onchange={contactHandleChange}></lightning-input>
+                            </div>
+                            <div class="slds-col slds-size_6-of-12 slds-p-horizontal--medium slds-m-bottom_medium">
+                                <lightning-input label="Last Name" type="text" value={LastName}
+                                                 onchange={contactHandleChange} required=true></lightning-input>
+                            </div>
+                            <div class="slds-col slds-size_6-of-12 slds-p-horizontal--medium slds-m-bottom_medium">
+                                <lightning-input label="Email" type="email" value={Email} onchange={contactHandleChange}
+                                                 required=true></lightning-input>
+                            </div>
+                            <div class="slds-col slds-size_6-of-12 slds-p-horizontal--medium slds-m-bottom_medium">
+                                <lightning-input label="Mobile Phone" type="text" value={Phone}
+                                                 onchange={contactHandleChange}></lightning-input>
+                            </div>
+                            <div class="slds-col slds-size_6-of-12 slds-p-horizontal--medium slds-m-bottom_medium">
+                                <c-selector-account onselected={myLookupHandle}></c-selector-account>
+                            </div>
+                        </div>
+                        <footer class="slds-modal__footer">
+                            <button class="slds-button slds-button--destructive" onclick={modalAddContactHide}>Cancel
+                            </button>
+                            <button class="slds-button slds-button_brand" onclick={modalSaveContact}>Save</button>
+                        </footer>
+                    </div>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open">
+            </div>
+        </lightning-record-edit-form>
+    </template>
+</template>

@@ -1,0 +1,33 @@
+<template>
+    <div class="slds-p-bottom_large">
+        <div class="slds-size_3-of-12 slds-show_inline-block">
+            <lightning-input type="search" value={searchValue} placeholder="SEARCH BY NAME" onchange={searchKeyword}
+            ></lightning-input>
+        </div>
+        <div class="slds-show_inline-block slds-m-left_x-small">
+            <lightning-button label="FILTER" onclick={handleSearchKeyword} variant="brand"
+            ></lightning-button>
+        </div>
+        <div class="slds-show_inline-block slds-m-left_x-small">
+            <c-modal-add-contact onsave={successSave}></c-modal-add-contact>
+        </div>
+    </div>
+
+    <lightning-datatable key-field="id" data={data} columns={columns} onrowaction={handleRowAction}
+                         row-number-offset={rowOffset}>
+        >
+    </lightning-datatable>
+
+    <c-confirmation-dialog-delete title='Delete Contact'
+                                  message='“Are you sure you want to delete this contact?”'
+                                  confirm-label='Delete'
+                                  cancel-label='Cancel'
+                                  visible={isDialogVisible}
+                                  original-message={originalMessage}
+                                  name="confirmModal"
+                                  ondeletecontact={handleClick}
+                                  record-id={recordId}
+                                  selected-row={selectedRow}
+    >
+    </c-confirmation-dialog-delete>
+</template>

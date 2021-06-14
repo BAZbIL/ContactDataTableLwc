@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>51.0</apiVersion>
+    <description>Contact Table</description>
+    <isExposed>false</isExposed>
+    <masterLabel>Contact Table</masterLabel>
+
+</LightningComponentBundle>
