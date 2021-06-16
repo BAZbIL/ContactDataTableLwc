@@ -12,12 +12,12 @@
             <c-modal-add-contact onsave={successSave}></c-modal-add-contact>
         </div>
     </div>
-
-    <lightning-datatable key-field="id" data={data} columns={columns} onrowaction={handleRowAction}
-                         row-number-offset={rowOffset}>
-        >
+    <lightning-datatable key-field="id"
+                         data={data}
+                         columns={columns}
+                         onrowaction={handleRowAction}
+                         row-number-offset={rowOffset}> >
     </lightning-datatable>
-
     <c-confirmation-dialog-delete title='Delete Contact'
                                   message='“Are you sure you want to delete this contact?”'
                                   confirm-label='Delete'
@@ -25,9 +25,8 @@
                                   visible={isDialogVisible}
                                   original-message={originalMessage}
                                   name="confirmModal"
-                                  ondeletecontact={handleClick}
+                                  ondeletecontact={actionConfirmationDialog}
                                   record-id={recordId}
-                                  selected-row={selectedRow}
-    >
+                                  selected-row={selectedRow}>
     </c-confirmation-dialog-delete>
 </template>

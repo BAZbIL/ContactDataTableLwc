@@ -1,37 +1,43 @@
-<!--
- - Created by Admin on 13.04.2021.
- -->
-
-<!-- Selector Account -->
 <template>
-    <div class="lookupBlock" id="lookup">
-        <div if:true={showLookup} class="lookup-container">
-            <lightning-record-edit-form object-api-name={object}>
-                <lightning-input-field
-                        class="slds-popover slds-popover_edit slds-popover__body"
-                        field-name={fieldName}
-                        value={value}
-                        variant={variant}
-                        onchange={handleChange}>
-                </lightning-input-field>
-            </lightning-record-edit-form>
-        </div>
-        <div if:false={showLookup} class="slds-table_edit_container slds-is-relative">
-            <span class="slds-grid slds-grid_align-spread slds-cell-edit slds-align_absolute-center">
-                <span class="slds-truncate" title={lookupName}>
-                    <lightning-formatted-url value={lookupValue} label={lookupName} target={target}>
-                    </lightning-formatted-url>
-                </span>
-                <button data-id={context}
-                        class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small" tabindex="-1"
-                        title="Edit" onclick={handleClick}>
-                    <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_lock slds-button__icon_small slds-button__icon_edit slds-icon slds-icon-text-default slds-icon_xx-small"
-                         aria-hidden="true">
-                        <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg?cache=9.37.1#edit"></use>
-                    </svg>
-                    <span class="slds-assistive-text">Edit</span>
-                </button>
-            </span>
+    <div class="row">
+        <div class="slds-form-element">
+            <div class="slds-form-element__control">
+                <div class="slds-combobox_container">
+                    <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click"
+                         aria-expanded="false"
+                         aria-haspopup="listbox" role="combobox">
+                        <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right"
+                             role="none">
+                            <lightning-input type="search" id="combobox-id-16" value={accountName}
+                                             onchange={searchHandleKeyChange} onkeydown={searchHandleClick}
+                                             onclick={searchHandleClick}
+                                             onblur={searchHandleClick} aria-activedescendant="option1"
+                                             label='Account'
+                                             aria-autocomplete="list" aria-controls="listbox-id-12"
+                                             role="textbox"
+                                             placeholder="Search..."></lightning-input>
+                        </div>
+                        <div if:true={messageResult}>
+                            No Result Found!
+                        </div>
+                        <template if:true={showSearchedValues}>
+                            <div class="slds-box" style="height: 130px; overflow-y: scroll;">
+                                <ul class="" role="">
+                                    <template for:each={accountList} for:item="actObj">
+                                        <li class="slds-p-around_x-small" style="cursor: pointer;"
+                                            key={actObj.Id}
+                                            onclick={parentHandleAction} data-value={actObj.Id}
+                                            data-label={actObj.Name}>
+                                            {actObj.Name}
+                                        </li>
+                                    </template>
+                                </ul>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
 </template>

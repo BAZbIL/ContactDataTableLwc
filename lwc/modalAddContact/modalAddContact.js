@@ -1,7 +1,3 @@
-/**
- * Created by Admin on 10.04.2021.
- */
-
 import {LightningElement, track, api} from 'lwc';
 import {createRecord} from 'lightning/uiRecordApi';
 import CONTACT_OBJECT from '@salesforce/schema/Contact';
@@ -21,6 +17,10 @@ export default class ModalAddContact extends LightningElement {
     @track modalAddContact = false;
     @api recordId;
     @api _wiredResult;
+    FirstName = '';
+    LastName = '';
+    Email = '';
+    Phone = '';
 
     modalAddContactShow() {
         this.modalAddContact = true;
@@ -31,28 +31,19 @@ export default class ModalAddContact extends LightningElement {
         this.modalAddContact = false;
     }
 
-    FirstName = '';
-    LastName = '';
-    Email = '';
-    Phone = '';
-
     contactHandleChange(event) {
-
-        if (event.target.label == 'First Name') {
+        if (event.target.label === 'First Name') {
             this.FirstName = event.target.value;
         }
-        if (event.target.label == 'Last Name') {
+        if (event.target.label === 'Last Name') {
             this.LastName = event.target.value;
         }
-
-        if (event.target.label == 'Email') {
+        if (event.target.label === 'Email') {
             this.Email = event.target.value;
         }
-
-        if (event.target.label == 'Mobile Phone') {
+        if (event.target.label === 'Mobile Phone') {
             this.Phone = event.target.value;
         }
-
     }
 
     myLookupHandle(event) {
@@ -66,7 +57,9 @@ export default class ModalAddContact extends LightningElement {
         fields[EMAIL_FIELD.fieldApiName] = this.Email;
         fields[PHONE_FIELD.fieldApiName] = this.Phone;
         fields[ACCOUNT_FIELD.fieldApiName] = this.selectedAccountId;
+
         const recordInput = {apiName: CONTACT_OBJECT.objectApiName, fields};
+
         createRecord(recordInput)
             .then(contact => {
                 this.contactId = contact.id;
@@ -93,9 +86,6 @@ export default class ModalAddContact extends LightningElement {
                     }),
                 );
             });
-
-
     }
-
 
 }

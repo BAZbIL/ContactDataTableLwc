@@ -1,16 +1,12 @@
-/**
- * Created by Admin on 15.04.2021.
- */
-
 @IsTest
 private class contactTableControllerTest {
+
     @TestSetup
     static void setup() {
-        //Create account
+
         Account account = new Account(Name = 'TestAccount');
         insert account;
 
-        //Create list of contacts
         List<Contact> contacts = new List<Contact>();
         Contact contact1 = new Contact(FirstName = 'test1', LastName = 'test1', Email = 'test1@test1.com',
                 Phone = '123', AccountId = account.Id);
@@ -23,15 +19,17 @@ private class contactTableControllerTest {
         contacts.add(contact2);
         contacts.add(contact3);
 
-        //insert contact list
         insert contacts;
     }
+
     @IsTest
     static void getFindContact() {
+
         Test.startTest();
         List<Contact> contactsSearchNull = contactTableController.getFindContact(null);
         List<Contact> contactsSearch = contactTableController.getFindContact('TestName');
         Test.stopTest();
+
         List<Contact> createdContactsNull = [SELECT FirstName, LastName, Email, AccountId, CreatedDate, Phone FROM Contact];
         for (Integer i = 0; i < contactsSearchNull.size(); i++) {
             System.assert(contactsSearchNull[i].FirstName == createdContactsNull[i].FirstName);
@@ -53,12 +51,18 @@ private class contactTableControllerTest {
         }
 
     }
+
     @IsTest
     static void getAccountModal() {
+
         Test.startTest();
         List<Account> accounts = contactTableController.getAccountModal('Name');
         Test.stopTest();
-        List<Account> createdAccounts = [SELECT Id, Name FROM Account];
+
+        List<Account> createdAccounts = [
+                SELECT Id, Name
+                FROM Account
+        ];
         for (Integer i = 0; i < accounts.size(); i++) {
             System.assert(accounts[i].Id == createdAccounts[i].Id);
             System.assert(accounts[i].Name == createdAccounts[i].Name);
@@ -68,22 +72,22 @@ private class contactTableControllerTest {
 
     @IsTest
     static void deleteContactsTest() {
-        List<Id> ldsTest = new List<Id>();
-        Id testCon;
+
+        List<Id> listContactTest = new List<Id>();
+        Id testContact;
         Contact deleteContact = [SELECT Id FROM Contact LIMIT 1];
-        ldsTest.add(testCon);
+        listContactTest.add(testContact);
         delete deleteContact;
 
         Test.startTest();
         try {
-            contactTableController.deleteContacts(ldsTest);
+            contactTableController.deleteContacts(listContactTest);
         } catch (Exception e) {
 
         }
         Test.stopTest();
 
         System.assertEquals(2, [SELECT Id FROM Contact].size());
-
     }
 
 }

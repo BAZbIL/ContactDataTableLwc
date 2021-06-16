@@ -1,13 +1,9 @@
-/**
- * Created by User on 01.04.2021.
- */
-
 import {LightningElement, api, track, wire} from 'lwc';
-import getFindContact from "@salesforce/apex/contactTableController.getFindContact";
+import getContact from "@salesforce/apex/contactTableController.getFindContact";
 import {ShowToastEvent} from 'lightning/platformShowToastEvent';
 import {NavigationMixin} from 'lightning/navigation';
 import {refreshApex} from "@salesforce/apex";
-import delSelectedCons from '@salesforce/apex/contactTableController.deleteContacts';
+import deleteContact from '@salesforce/apex/contactTableController.deleteContacts';
 
 
 const columns = [
@@ -27,7 +23,6 @@ const columns = [
             variant: 'border-filled', alternativeText: 'Delete'
         }
     },
-
 ];
 
 export default class contactTable extends NavigationMixin(LightningElement) {
@@ -35,6 +30,7 @@ export default class contactTable extends NavigationMixin(LightningElement) {
     @api objectApiName;
     @api AccountId;
     @api ContactId;
+    @track getFindContact;
     @track data;
     @track error;
     @track record = {};
@@ -43,12 +39,11 @@ export default class contactTable extends NavigationMixin(LightningElement) {
     @track columns = columns;
     @track isDialogVisible = false;
     @track originalMessage;
-    @track displayMessage = 'Click on the \'Open Confirmation\' button to test the dialog.'
+    @track displayMessage = 'Click on the \'Open Confirmation\' button to test the dialog.';
     @track selectedRow;
     _wiredResult;
-    error;
 
-    @wire(getFindContact)
+    @wire(getContact)
     wiredCallback(result) {
         this._wiredResult = result;
         const {data, error} = result;
@@ -77,13 +72,12 @@ export default class contactTable extends NavigationMixin(LightningElement) {
         }
     }
 
-    handleClick(event) {
+    actionConfirmationDialog(event) {
         this.originalMessage = event.currentTarget.dataset.id;
         if (event.target.name === 'confirmModal') {
-
             if (event.detail.status === 'confirm') {
                 let selectedRow = event.detail.selectedRow;
-                this.deleteCons(selectedRow);
+                this.deleteContacts(selectedRow);
                 this.isDialogVisible = false;
             } else if (event.detail.status === 'cancel') {
                 this.isDialogVisible = false;
@@ -92,30 +86,27 @@ export default class contactTable extends NavigationMixin(LightningElement) {
         }
     }
 
-    @track getFindContact;
-
-    deleteCons(currentRow) {
+    deleteContacts(currentRow) {
         let currentRecord = [];
         currentRecord.push(currentRow.Id);
-
-        delSelectedCons({lstConIds: currentRecord})
+        deleteContact({listContactIds: currentRecord})
             .then(() => {
-
                 this.dispatchEvent(new ShowToastEvent({
-                    title: 'Success!!',
-                    message: currentRow.FirstName + ' ' + currentRow.LastName + ' Contact deleted.',
-                    variant: 'success'
-                }),);
+                        title: 'Success!!',
+                        message: currentRow.FirstName + ' ' + currentRow.LastName + ' Contact deleted.',
+                        variant: 'success'
+                    }),
+                );
 
                 return refreshApex(this._wiredResult);
-
             })
             .catch(error => {
                 this.dispatchEvent(new ShowToastEvent({
-                    title: 'Error!!',
-                    message: error.message,
-                    variant: 'error'
-                }),);
+                        title: 'Error!!',
+                        message: error.message,
+                        variant: 'error'
+                    }),
+                );
             });
     }
 
@@ -125,9 +116,8 @@ export default class contactTable extends NavigationMixin(LightningElement) {
     }
 
     handleSearchKeyword() {
-
         if (this.searchValue !== '% + ') {
-            getFindContact({
+            getContact({
                 searchKey: this.searchValue
             })
                 .then(result => {
@@ -144,4 +134,5 @@ export default class contactTable extends NavigationMixin(LightningElement) {
                 });
         }
     }
+
 }

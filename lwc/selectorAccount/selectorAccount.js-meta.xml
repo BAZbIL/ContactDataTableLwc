@@ -2,11 +2,6 @@
 <LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>50.0</apiVersion>
     <description>Selector Account</description>
-    <isExposed>true</isExposed>
+    <isExposed>false</isExposed>
     <masterLabel>Selector Account</masterLabel>
-    <targets>
-        <target>lightning__AppPage</target>
-        <target>lightning__RecordPage</target>
-        <target>lightning__HomePage</target>
-    </targets>
 </LightningComponentBundle>

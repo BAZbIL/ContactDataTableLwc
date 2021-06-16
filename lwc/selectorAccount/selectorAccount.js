@@ -1,11 +1,8 @@
-/**
- * Created by Admin on 13.04.2021.
- */
-
 import {LightningElement, track, wire} from 'lwc';
-import getAccountModal from '@salesforce/apex/contactTableController.getAccountModal'
+import getCustomLookupAccount from '@salesforce/apex/contactTableController.getAccountModal';
 
-export default class SelectorAccount extends LightningElement {
+export default class selectorAccount extends LightningElement {
+
     @track accountName = '';
     @track accountList = [];
     @track objectApiName = 'Account';
@@ -15,7 +12,7 @@ export default class SelectorAccount extends LightningElement {
     @track isShowResult = true;
     @track showSearchedValues = false;
 
-    @wire(getAccountModal, {actName: '$accountName'})
+    @wire(getCustomLookupAccount, {accountsName: '$accountName'})
     retrieveAccounts({error, data}) {
         this.messageResult = false;
         if (data) {
@@ -23,10 +20,10 @@ export default class SelectorAccount extends LightningElement {
                 this.accountList = data;
                 this.showSearchedValues = true;
                 this.messageResult = false;
-            } else if (data.length == 0) {
+            } else if (data.length === 0) {
                 this.accountList = [];
                 this.showSearchedValues = false;
-                if (this.accountName != '') {
+                if (this.accountName !== '') {
                     this.messageResult = true;
                 }
             } else if (error) {
@@ -36,16 +33,13 @@ export default class SelectorAccount extends LightningElement {
                 this.showSearchedValues = false;
                 this.messageResult = true;
             }
-
         }
     }
-
 
     searchHandleClick() {
         this.isShowResult = true;
         this.messageResult = false;
     }
-
 
     searchHandleKeyChange(event) {
         this.messageResult = false;
