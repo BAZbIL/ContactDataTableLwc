@@ -5,18 +5,25 @@ import {NavigationMixin} from 'lightning/navigation';
 import {refreshApex} from "@salesforce/apex";
 import deleteContact from '@salesforce/apex/contactTableController.deleteContacts';
 
-
 const columns = [
     {label: 'First Name', fieldName: 'FirstName'},
     {label: "Last Name", fieldName: 'LastName'},
     {
         label: 'Accounts',
         type: 'button',
-        typeAttributes: {label: {fieldName: 'AccountId'}, name: 'navigate_account', variant: 'base'}
+        typeAttributes: {label: {fieldName: 'AccountName'}, value: 'AccountId', name: 'navigate_account', variant: 'base'}
     },
     {label: 'Email', fieldName: 'Email', type: 'email'},
     {label: 'Mobile phone', fieldName: 'Phone', type: 'name'},
-    {label: 'Created Date', fieldName: 'CreatedDate', type: 'date'},
+    {
+        label: 'Created Date', fieldName: 'CreatedDate', type: 'date', typeAttributes: {
+            month: "2-digit",
+            day: "2-digit",
+            year: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit"
+        }
+    },
     {
         type: 'button-icon', label: 'Action', initialWidth: 75, typeAttributes: {
             iconName: 'action:delete', title: 'Delete', name: 'delete_contact',
@@ -27,20 +34,17 @@ const columns = [
 
 export default class contactTable extends NavigationMixin(LightningElement) {
     @api recordId;
-    @api objectApiName;
-    @api AccountId;
-    @api ContactId;
-    @track getFindContact;
     @track data;
     @track error;
     @track record = {};
-    @track currentRecordId;
     @track rowOffset = 0;
     @track columns = columns;
     @track isDialogVisible = false;
     @track originalMessage;
     @track displayMessage = 'Click on the \'Open Confirmation\' button to test the dialog.';
     @track selectedRow;
+    lastSavedData;
+    records;
     _wiredResult;
 
     @wire(getContact)
@@ -48,16 +52,27 @@ export default class contactTable extends NavigationMixin(LightningElement) {
         this._wiredResult = result;
         const {data, error} = result;
         if (data) {
-            this.data = data;
+            this.records = JSON.parse(JSON.stringify(data));
+            this.records.forEach(rec => {
+                if(rec.Account){
+                    rec.AccountName = rec.Account.Name;
+                }
+            });
             this.error = undefined;
         } else if (error) {
+            this.records = undefined;
             this.error = error;
-            this.data = undefined;
+        } else {
+            this.error = undefined;
+            this.records = undefined;
         }
+        this.lastSavedData;
     }
 
     handleRowAction(event) {
+
         if (event.detail.action.name === 'navigate_account') {
+
             this.record = event.detail.row;
             this[NavigationMixin.Navigate]({
                 type: 'standard__recordPage',
@@ -67,30 +82,38 @@ export default class contactTable extends NavigationMixin(LightningElement) {
                 },
             });
         } else if (event.detail.action.name === 'delete_contact') {
+
             this.selectedRow = event.detail.row;
             this.isDialogVisible = true;
         }
     }
 
     actionConfirmationDialog(event) {
+
         this.originalMessage = event.currentTarget.dataset.id;
         if (event.target.name === 'confirmModal') {
+
             if (event.detail.status === 'confirm') {
+
                 let selectedRow = event.detail.selectedRow;
                 this.deleteContacts(selectedRow);
                 this.isDialogVisible = false;
             } else if (event.detail.status === 'cancel') {
+
                 this.isDialogVisible = false;
             }
+
             this.isDialogVisible = false;
         }
     }
 
     deleteContacts(currentRow) {
+
         let currentRecord = [];
         currentRecord.push(currentRow.Id);
         deleteContact({listContactIds: currentRecord})
             .then(() => {
+
                 this.dispatchEvent(new ShowToastEvent({
                         title: 'Success!!',
                         message: currentRow.FirstName + ' ' + currentRow.LastName + ' Contact deleted.',
@@ -101,6 +124,7 @@ export default class contactTable extends NavigationMixin(LightningElement) {
                 return refreshApex(this._wiredResult);
             })
             .catch(error => {
+
                 this.dispatchEvent(new ShowToastEvent({
                         title: 'Error!!',
                         message: error.message,
@@ -112,23 +136,29 @@ export default class contactTable extends NavigationMixin(LightningElement) {
 
 
     searchKeyword(event) {
+
         this.searchValue = event.target.value;
     }
 
     handleSearchKeyword() {
+
         if (this.searchValue !== '% + ') {
+
             getContact({
                 searchKey: this.searchValue
             })
                 .then(result => {
-                    this.data = result;
+
+                    this.records = result;
                 })
                 .catch(error => {
+
                     const event = new ShowToastEvent({
                         title: 'Error',
                         variant: 'error',
                         message: error.body.message,
                     });
+
                     this.dispatchEvent(event);
                     this.data = null;
                 });
